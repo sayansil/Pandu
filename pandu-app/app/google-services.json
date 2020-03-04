@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "351367020062",
+    "firebase_url": "https://pandu-pandu.firebaseio.com",
+    "project_id": "pandu-pandu",
+    "storage_bucket": "pandu-pandu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:351367020062:android:75ad88461e8971fad0780f",
+        "android_client_info": {
+          "package_name": "team.OG.pandu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "351367020062-c753fj2qu8rq0sojrsem0he8tgfoc0kn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "team.OG.pandu",
+            "certificate_hash": "90a9b8359c92d259707d4f2278a9f793bc3dc4b0"
+          }
+        },
+        {
+          "client_id": "351367020062-eff9iju8e1s6uenlffgalettstg486hg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkC9nptTezOVuJFbQafJyYYK79pwjQjBo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "351367020062-eff9iju8e1s6uenlffgalettstg486hg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
