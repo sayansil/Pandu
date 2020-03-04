@@ -6,8 +6,11 @@ from io import BytesIO
 from flask import Flask, render_template, request
 
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    return app
 
+app = create_app()
 
 def get_names(db, pandel_id):
     names = []
@@ -72,7 +75,8 @@ def main():
 
 @app.route('/ok')
 def ok():
-    return "ok"
+    return "ok", 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
