@@ -22,7 +22,6 @@ def get_reviews():
     reviews = []
     db = firestore.Client()
     pandel_ref = db.collection('pandels')
-    # Initialize all pandels
     for pandel in pandel_ref.stream():
         print("Fetching data from: ", pandel.to_dict()['name'])
         review_ref = db.collection('pandels').document(pandel.id).collection('reviews')
