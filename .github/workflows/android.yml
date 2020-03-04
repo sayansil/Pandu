@@ -18,7 +18,9 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        cd  pandu-app
+        ./gradlew build
   
   generate-apk:
 
@@ -31,7 +33,9 @@ jobs:
       with:
         java-version: 1.8
     - name: Build debug apk
-      run: ./gradlew assembleDebug --stacktrace
+      run: |
+        cd pandu-app
+        ./gradlew assembleDebug --stacktrace
     - name: Upload apk
       uses: actions/upload-artifact@v1
       with: 
