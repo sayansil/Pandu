@@ -22,7 +22,7 @@ jobs:
         cd  pandu-app
         bash ./gradlew build
 
-  generate-mock-apk:
+  generate-apk:
 
     runs-on: ubuntu-latest
 
