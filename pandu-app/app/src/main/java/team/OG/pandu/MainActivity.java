@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,12 +23,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import team.OG.pandu.Barcode.BarcodeCaptureActivity;
@@ -105,15 +109,11 @@ public class MainActivity extends AppCompatActivity {
         this.moveTaskToBack(true);
     }
 
-    private void send_feedback(String id) {
-        if (id.length() < 6 || !id.substring(0, 6).equals("pandu-")) {
-            Toast.makeText(getApplicationContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
-            return;
+    private void send_feedback(String qrid, String name) {
+        if (name.length() > 20) {
+            name = name.substring(0, 20) + '\u2026';
         }
 
-        progressbar.setVisibility(View.VISIBLE);
-
-        final String qrid = id.substring(6);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
 
@@ -122,8 +122,9 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(promptsView);
 
-        final TextInputEditText fbInput = promptsView
-                .findViewById(R.id.textfb);
+        final TextInputEditText fbInput = promptsView.findViewById(R.id.textfb);
+        final TextView pname = promptsView.findViewById(R.id.pnameText);
+        pname.setText(name);
 
         alertDialogBuilder
                 .setCancelable(false)
@@ -150,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel",
                         (DialogInterface dialog,int d_id) -> {
                             dialog.cancel();
+                            progressbar.setVisibility(View.GONE);
                         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -163,7 +165,27 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    send_feedback(barcode.displayValue);
+
+                    String id = barcode.displayValue;
+                    if (id.length() < 6 || !id.substring(0, 6).equals("pandu-")) {
+                        Toast.makeText(getApplicationContext(), "Invalid QR code", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String qrid = id.substring(6);
+
+                    progressbar.setVisibility(View.VISIBLE);
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("pandels").document(qrid)
+                            .get()
+                            .addOnCompleteListener((@NonNull Task<DocumentSnapshot> task) -> {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    send_feedback(qrid, document.getString("name"));
+                                } else {
+                                    Log.w(TAG, "Error adding document");
+                                    progressbar.setVisibility(View.GONE);
+                                }
+                            });
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "No QR code captured", Toast.LENGTH_SHORT).show();
