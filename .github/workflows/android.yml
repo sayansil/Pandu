@@ -20,7 +20,7 @@ jobs:
     - name: Build with Gradle
       run: |
         cd  pandu-app
-        ./gradlew build
+        bash ./gradlew build
   
   generate-apk:
 
@@ -35,7 +35,7 @@ jobs:
     - name: Build debug apk
       run: |
         cd pandu-app
-        ./gradlew assembleDebug --stacktrace
+        bash ./gradlew assembleDebug --stacktrace
     - name: Upload apk
       uses: actions/upload-artifact@v1
       with: 
