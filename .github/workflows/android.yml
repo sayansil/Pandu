@@ -20,10 +20,9 @@ jobs:
     - name: Build with Gradle
       run: |
         cd  pandu-app
-        mv app/mock-google-services.json app/google-services.json
         bash ./gradlew build
 
-  generate-apk:
+  generate-mock-apk:
 
     runs-on: ubuntu-latest
 
@@ -36,7 +35,6 @@ jobs:
     - name: Build debug apk
       run: |
         cd pandu-app
-        mv app/mock-google-services.json app/google-services.json
         bash ./gradlew assembleDebug --stacktrace
     - name: Upload apk
       uses: actions/upload-artifact@v1
