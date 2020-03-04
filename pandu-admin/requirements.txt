@@ -1,0 +1,8 @@
+jinja2
+Flask
+werkzeug
+google-cloud-firestore
+pandas
+numpy
+matplotlib
+bokeh
