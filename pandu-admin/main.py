@@ -70,5 +70,9 @@ def main():
     return render_template('results.html', plots=plots, html_scripts=html_scripts, d_buttons=d_buttons)
 
 
+@app.route('/ok')
+def ok():
+    return "ok"
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
