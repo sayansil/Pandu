@@ -7,7 +7,9 @@ from flask import Flask, render_template, request
 from wtforms import StringField, BooleanField, SelectField, validators
 from flask_wtf import FlaskForm
 import json
+import pickle
 import dill
+from collections import Counter
 from pymystem3 import Mystem
 from stopwords import stopwords
 import numpy as np
@@ -151,6 +153,21 @@ def results_on(pandel_id):
     hover.tooltips = tooltip_dict
     script, plot_div = components(plot_df)
     html_scripts.append(script)
+    plots.append({"title": title, "div": plot_div})
+
+    #############################
+    #       Sentiment Pie       #
+    #############################
+
+    title = "Sentiment-based Pie chart"
+    model = pickle.load(open("pickles/sentiment_lr.sav", 'rb'))
+    result = Counter(model.predict(vectors))
+    labels = ["Positive", "Negative"]
+    sizes = [int(result[1] * 100), int(result[0] * 100)]
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.axis('equal')
+    plot_div = get_static_plot()
     plots.append({"title": title, "div": plot_div})
 
     #########################
