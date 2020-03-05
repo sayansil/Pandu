@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from base64 import b64encode
 from io import BytesIO
 from flask import Flask, render_template, request
+from wtforms import StringField, BooleanField, SelectField, validators
+from flask_wtf import FlaskForm
+import json
 
 
 def create_app():
@@ -12,7 +15,13 @@ def create_app():
 
 app = create_app()
 
-def get_names(db, pandel_id):
+
+with open('config.json') as config_file:
+    configs = json.load(config_file)
+    app.config['SECRET_KEY'] = configs['SECRET_KEY']
+
+
+def get_names():
     names = []
     db = firestore.Client()
     pandel_ref = db.collection('pandels')
@@ -47,13 +56,14 @@ def get_static_plot():
     return data
 
 
-@app.route('/')
-def main():
+def results_on(pandel_id):
     plots = list()
     d_buttons = list()
     html_scripts = list()
 
     df = get_reviews()
+    if pandel_id != '--all--':
+        df = df.loc[df['pandel_id'] == pandel_id]
 
     #########################
     #       All reviews     #
@@ -73,7 +83,30 @@ def main():
     return render_template('results.html', plots=plots, html_scripts=html_scripts, d_buttons=d_buttons)
 
 
-@app.route('/ok')
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    df = get_names()
+    name_pairs = list(df[['pandel_id', 'pandel_name']].itertuples(index=False, name=None))
+    name_pairs = [('--all--', '--all--')] + name_pairs
+
+
+    class PandelAnalysisForm(FlaskForm):
+        pandel_choice = SelectField(
+            label='pandel_choice',
+            choices=name_pairs
+        )
+
+    form = PandelAnalysisForm()
+
+    if form.validate_on_submit():
+        pandel_id = str(form.pandel_choice.data).strip()
+        return results_on(pandel_id)
+
+    return render_template('home.html', form=form)
+
+
+
+@app.route('/ok', methods=['GET', 'POST'])
 def ok():
     return "ok", 200
 
