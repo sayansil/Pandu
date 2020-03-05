@@ -7,6 +7,19 @@ from flask import Flask, render_template, request
 from wtforms import StringField, BooleanField, SelectField, validators
 from flask_wtf import FlaskForm
 import json
+import dill
+from pymystem3 import Mystem
+from stopwords import stopwords
+import numpy as np
+import re
+from umap import UMAP
+import bokeh.plotting as bp
+from bokeh.models import HoverTool, TapTool, OpenURL
+from bokeh.plotting import figure, show, output_notebook, reset_output
+from bokeh.palettes import d3
+import bokeh.models as bmo
+import bokeh.io
+from bokeh.embed import components
 
 
 def create_app():
@@ -56,21 +69,97 @@ def get_static_plot():
     return data
 
 
+def generate_vectors(docs):
+    docs = remove_strange_char(docs)
+    docs = tokenize(docs)
+    docs = lemmatize(docs)
+    docs = remove_stopwords(docs)
+    vectorizer = dill.load(open("pickles/imdb_tfidf_py38.sav", 'rb'))
+    vectors = vectorizer.transform(docs).toarray()
+    features = np.array(vectorizer.get_feature_names())
+    return vectors, features
+
+
+def remove_strange_char(docs):
+    return [re.sub(r'[^a-zA-Z #_+]', r'', doc) for doc in docs]
+
+
+def tokenize(docs):
+    return [doc.lower().split() for doc in docs]
+
+
+def lemmatize(docs):
+    lemm = Mystem()
+    return [[''.join(lemm.lemmatize(word)).replace('\n', '') for word in doc] for doc in docs]
+
+
+def remove_stopwords(docs: list) -> list:
+    return [[word for word in doc if len(word) > 1 and word not in stopwords] for doc in docs]
+
+
 def results_on(pandel_id):
     plots = list()
     d_buttons = list()
     html_scripts = list()
 
     df = get_reviews()
+    name_map = get_names()
+    name_map = dict(zip(name_map['pandel_id'], name_map['pandel_name']))
+    df['pandel_name'] = [name_map[i] for i in df['pandel_id']]
     if pandel_id != '--all--':
         df = df.loc[df['pandel_id'] == pandel_id]
+
+    #############################
+    #       Cluster UMAP        #
+    #############################
+
+    title = "2D map of reviews"
+    vectors, features = generate_vectors(list(df['review_text']))
+    fit = UMAP(
+        n_neighbors=5,
+        min_dist=0.2,
+        n_components=2,
+        metric='cosine')
+    u = fit.fit_transform(vectors)
+    df["plot_x"] = u[:, 0]
+    df["plot_y"] = u[:, 1]
+    plot_df = bp.figure(
+        plot_width=700,
+        plot_height=600,
+        tools="pan,wheel_zoom,box_zoom,reset,hover",
+        x_axis_type=None,
+        y_axis_type=None,
+        min_border=1)
+    pandel_ids = list(set(df['pandel_id']))
+    color = d3['Category10']
+    palette = color[len(pandel_ids)] if len(pandel_ids) > 2 else color[3][0:len(pandel_ids)]
+    groups = df.groupby('pandel_id')
+    for group in groups:
+        color = palette[pandel_ids.index(group[0])-1]
+        plot_df.scatter(
+            x="plot_x",
+            y="plot_y",
+            fill_color=color,
+            size=10,
+            legend_group='pandel_name',
+            source=group[1])
+    hover = plot_df.select(dict(type=HoverTool))
+    tooltip_dict = dict()
+    tooltip_dict['pandel_id'] = "@" + 'pandel_id'
+    tooltip_dict['user_id'] = "@" + 'user_id'
+    tooltip_dict['review_text'] = "@" + 'review_text'
+    hover.tooltips = tooltip_dict
+    script, plot_div = components(plot_df)
+    html_scripts.append(script)
+    plots.append({"title": title, "div": plot_div})
 
     #########################
     #       All reviews     #
     #########################
 
     title = "All Reviews"
-    plot_div = df_to_html(df)
+    view_df = df[['pandel_name', 'review_text', 'user_id']]
+    plot_div = df_to_html(view_df)
     plot_div = plot_div.replace(
         '<table border="1" class="dataframe">',
         '<table id="table_div" class="table table-striped">')
