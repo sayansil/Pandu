@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/faboptions_scan"
+        android:icon="@drawable/ic_scan"
+        android:title="Scan" />
+
+    <item
+        android:id="@+id/faboptions_rank"
+        android:icon="@drawable/ic_rank"
+        android:title="Crowd Ranking" />
+
+    <item
+        android:id="@+id/faboptions_help"
+        android:icon="@drawable/ic_help"
+        android:title="Help" />
+
+    <item
+        android:id="@+id/faboptions_info"
+        android:icon="@drawable/ic_info"
+        android:title="Info" />
+
+    <item
+        android:id="@+id/faboptions_buy"
+        android:icon="@drawable/ic_buy"
+        android:title="Buy" />
+
+    <item
+        android:id="@+id/faboptions_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout" />
+</menu>

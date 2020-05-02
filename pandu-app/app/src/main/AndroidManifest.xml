@@ -21,9 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="team.OG.pandu.MainActivity" />
         <activity android:name="team.OG.pandu.Barcode.BarcodeCaptureActivity" />
         <activity android:name="team.OG.pandu.InfoActivity" />
+        <activity android:name=".ListActivity" />
+        <activity android:name=".PandalHomeActivity"/>
+        <activity android:name=".RankingActivity" />
+        <activity android:name=".BuyActivity" />
 
     </application>
 
