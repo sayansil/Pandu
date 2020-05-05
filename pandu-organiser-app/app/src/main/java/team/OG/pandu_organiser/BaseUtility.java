@@ -1,4 +1,5 @@
-package team.OG.pandu;
+package team.OG.pandu_organiser;
+
 
 import android.content.Context;
 import android.os.Build;

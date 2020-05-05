@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Pandu-Organiser</string>
+
+    <string name="no_internet">"No internet connection :("</string>
+
+    <string-array name="dev_names">
+        <item>Rohan Mark Gomes</item>
+        <item>Sayan Sil</item>
+        <item>Uddipto Jana</item>
+    </string-array>
+</resources>

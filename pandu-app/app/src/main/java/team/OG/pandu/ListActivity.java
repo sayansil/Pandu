@@ -138,7 +138,7 @@ public class ListActivity extends AppCompatActivity {
 
                                     send_feedback(qrid, document.getString("name"));
                                 } else {
-                                    Log.w(TAG, "Error adding document");
+                                    Log.w(TAG, "Error fetching document");
 //                                    progressbar.setVisibility(View.GONE);
                                 }
                             });

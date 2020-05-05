@@ -1,0 +1,2 @@
+rootProject.name='Pandu-Organiser'
+include ':app'
