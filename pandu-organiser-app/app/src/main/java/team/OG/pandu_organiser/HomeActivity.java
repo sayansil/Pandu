@@ -63,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
                 case R.id.faboptions_analyze:
                     Intent intent = new Intent(HomeActivity.this, AnalyzeActivity.class);
                     intent.putExtra("uid", uid);
-                    intent.putExtra("crowdCount", currentPandal.getPublicCount());
                     startActivity(intent);
                     break;
                 case R.id.faboptions_edit:

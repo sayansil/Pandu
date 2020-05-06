@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -43,12 +44,26 @@ public class AnalyzeActivity extends AppCompatActivity {
         positiveRate = findViewById(R.id.ratingPos);
         starRate = findViewById(R.id.ratingStar);
 
-        crowdCount.setText(getIntent().getStringExtra("crowdCount"));
         uid = getIntent().getStringExtra("uid");
 
         fbList = new ArrayList<>();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("pandels").document(uid)
+                .get()
+                .addOnCompleteListener((@NonNull Task<DocumentSnapshot> task) -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document.exists()) {
+                            crowdCount.setText(document.getLong("publicCount").intValue() + "");
+                        }
+                    } else {
+                        Log.e(TAG, "Error fetching document");
+                    }
+                });
+
         db.collection("pandels/" + uid + "/reviews")
                 .get()
                 .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
