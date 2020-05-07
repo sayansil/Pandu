@@ -2,23 +2,28 @@ package team.OG.pandu_organiser;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.joaquimley.faboptions.FabOptions;
@@ -29,6 +34,7 @@ import team.OG.pandu_organiser.Units.Pandal;
 public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
+    private static final String RUN_TAG = "LIVE TESTING";
 
     ImageView picture;
     TextView name;
@@ -51,7 +57,6 @@ public class HomeActivity extends AppCompatActivity {
         theme = findViewById(R.id.pandalHeaderTheme);
         location = findViewById(R.id.pandalHeaderLocation);
 
-
         bottomMenu = findViewById(R.id.optionsHome);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -61,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         bottomMenu.setOnClickListener((View view) -> {
             switch(view.getId()) {
                 case R.id.faboptions_analyze:
+                    BaseUtility.writeLog(RUN_TAG, "hello");
                     Intent intent = new Intent(HomeActivity.this, AnalyzeActivity.class);
                     intent.putExtra("uid", uid);
                     startActivity(intent);
@@ -83,6 +89,10 @@ public class HomeActivity extends AppCompatActivity {
 
         refresh();
 
+        if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+
     }
 
     private void refresh() {
@@ -94,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener((@NonNull Task<DocumentSnapshot> task) -> {
                     if (task.isSuccessful()) {
+                        BaseUtility.writeLog(TAG, "Pandel Info Access Successful");
                         DocumentSnapshot document = task.getResult();
 
                         if (document.exists()) {
@@ -111,6 +122,8 @@ public class HomeActivity extends AppCompatActivity {
                             );
 
                         } else {
+                            BaseUtility.writeLog(TAG, "Pandel List Not found");
+
                             name.setText("[ Empty ]");
                             theme.setText("[ Empty ]");
                             location.setText("[ Empty ]");
@@ -169,12 +182,14 @@ public class HomeActivity extends AppCompatActivity {
                                             inputPicture.getText().toString()
                                     ))
                                     .addOnSuccessListener((Void aVoid) -> {
+                                        BaseUtility.writeLog(TAG, "Pandel Update Successful");
                                         Log.d(TAG, "Document added.");
 //                                        progressbar.setVisibility(View.GONE);
 
                                         refresh();
                                     })
                                     .addOnFailureListener((@NonNull Exception e) -> {
+                                        BaseUtility.writeLog(TAG, "Pandel Update Unsuccessful");
                                         Log.w(TAG, "Error adding document", e);
 //                                        progressbar.setVisibility(View.GONE);
                                     });
