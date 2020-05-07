@@ -159,6 +159,11 @@ public class ListActivity extends AppCompatActivity {
 
     private void send_feedback(String qrid, String name) {
 
+        if (null == name) {
+            Toast.makeText(getApplicationContext(), "Invalid QR", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (name.length() > 20) {
             name = name.substring(0, 20) + '\u2026';
         }
