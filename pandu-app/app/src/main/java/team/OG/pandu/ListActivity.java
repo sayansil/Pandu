@@ -35,10 +35,12 @@ import java.util.ArrayList;
 import hyogeun.github.com.colorratingbarlib.ColorRatingBar;
 import team.OG.pandu.Barcode.BarcodeCaptureActivity;
 import team.OG.pandu.ListAdapters.PandalAdapter;
+import team.OG.pandu.Managers.FeedbackManager;
+import team.OG.pandu.Managers.PandalManager;
 import team.OG.pandu.Units.Feedback;
 import team.OG.pandu.Units.Pandal;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements FeedbackManager, PandalManager {
 
     ListView pandalListView;
     FabOptions bottomMenu;
@@ -87,30 +89,7 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("pandels")
-                .get()
-                .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
-                    if (task.isSuccessful()) {
-
-                        ArrayList<Pandal> pandalList = new ArrayList<>();
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            pandalList.add(new Pandal(
-                                    document.getString("name"),
-                                    document.getLong("publicCount").intValue(),
-                                    document.getString("location"),
-                                    document.getString("theme"),
-                                    document.getString("picture")));
-                        }
-
-                        PandalAdapter mAdapter = new PandalAdapter(this, pandalList);
-                        pandalListView.setAdapter(mAdapter);
-
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.getException());
-                    }
-                });
+        getAllInformation();
     }
 
     @Override
@@ -189,32 +168,80 @@ public class ListActivity extends AppCompatActivity {
                             String feedback = fbInput.getText().toString().trim();
                             double ratingValue = ratingBar.getRating();
 
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("pandels/" + qrid + "/reviews").document(uid)
-                                    .set(new Feedback(
-                                            feedback,
-                                            ratingValue,
-                                            uid
-                                    ))
-                                    .addOnSuccessListener((Void aVoid) -> {
-                                        Log.d(TAG, "Document added.");
-//                                        progressbar.setVisibility(View.GONE);
-                                        BaseUtility.show_popup(R.layout.dialog_done, this);
-                                    })
-                                    .addOnFailureListener((@NonNull Exception e) -> {
-                                        Log.w(TAG, "Error adding document", e);
-//                                        progressbar.setVisibility(View.GONE);
-                                    });
+                            addFeedback(feedback, ratingValue, uid, qrid);
                         })
                 .setNegativeButton("Cancel",
                         (DialogInterface dialog,int d_id) -> {
                             dialog.cancel();
-//                            progressbar.setVisibility(View.GONE);
                         });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
         alertDialog.show();
+    }
+
+    @Override
+    public void addFeedback(String text, double rating, String uid, String oid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("pandels/" + oid + "/reviews").document(uid)
+                .set(new Feedback(
+                        text,
+                        rating,
+                        uid
+                ))
+                .addOnSuccessListener((Void aVoid) -> {
+                    Log.d(TAG, "Document added.");
+                    BaseUtility.show_popup(R.layout.dialog_done, this);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.w(TAG, "Error adding document", e);
+                });
+    }
+
+    @Override
+    public void getFeedbackData(String oid) {}
+
+    @Override
+    public void analyzeFeedback() {}
+
+    @Override
+    public void getRankingData() {}
+
+    @Override
+    public void fetchCurrentCrowdData(String oid) {}
+
+    @Override
+    public void updateInformation(String oid, Pandal pandal) {}
+
+    @Override
+    public void getInformation(String oid) {}
+
+    @Override
+    public void getAllInformation() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("pandels")
+                .get()
+                .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
+                    if (task.isSuccessful()) {
+
+                        ArrayList<Pandal> pandalList = new ArrayList<>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            pandalList.add(new Pandal(
+                                    document.getString("name"),
+                                    document.getLong("publicCount").intValue(),
+                                    document.getString("location"),
+                                    document.getString("theme"),
+                                    document.getString("picture")));
+                        }
+
+                        PandalAdapter mAdapter = new PandalAdapter(this, pandalList);
+                        pandalListView.setAdapter(mAdapter);
+
+                    } else {
+                        Log.w(TAG, "Error getting documents.", task.getException());
+                    }
+                });
     }
 
 }

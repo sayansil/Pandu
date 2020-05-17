@@ -59,9 +59,6 @@ public class AnalyzeActivity extends AppCompatActivity implements FeedbackManage
     public void addFeedback(String text, double rating, String uid, String oid) {}
 
     @Override
-    public void getRanking() {}
-
-    @Override
     public void analyzeFeedback() {}
 
     @Override
@@ -119,6 +116,10 @@ public class AnalyzeActivity extends AppCompatActivity implements FeedbackManage
 
     @Override
     public void getInformation(String oid) {}
+
+    @Override
+    public void getAllInformation() {}
+
 
     private void refresh_star() {
         double star_rating = 0;

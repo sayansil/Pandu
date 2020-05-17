@@ -220,4 +220,7 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                     }
                 });
     }
+
+    @Override
+    public void getAllInformation() {}
 }

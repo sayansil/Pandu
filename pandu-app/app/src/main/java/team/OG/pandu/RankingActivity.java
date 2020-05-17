@@ -18,9 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import team.OG.pandu.ListAdapters.RankAdapter;
+import team.OG.pandu.Managers.FeedbackManager;
+import team.OG.pandu.Managers.PandalManager;
+import team.OG.pandu.Units.Feedback;
 import team.OG.pandu.Units.Pandal;
 
-public class RankingActivity extends AppCompatActivity {
+public class RankingActivity extends AppCompatActivity implements PandalManager {
 
     private static final String TAG = "RankingActivity";
 
@@ -35,6 +38,12 @@ public class RankingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ranking);
 
         rankList = findViewById(R.id.rankListView);
+
+        getRankingData();
+    }
+
+    @Override
+    public void getRankingData() {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("pandels")
@@ -64,4 +73,17 @@ public class RankingActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    public void fetchCurrentCrowdData(String oid) {}
+
+    @Override
+    public void updateInformation(String oid, Pandal pandal) {}
+
+    @Override
+    public void getInformation(String oid) {}
+
+    @Override
+    public void getAllInformation() {}
+
 }

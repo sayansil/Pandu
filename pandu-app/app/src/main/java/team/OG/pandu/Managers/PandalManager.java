@@ -1,6 +1,7 @@
-package team.OG.pandu_organiser.Managers;
+package team.OG.pandu.Managers;
 
-import team.OG.pandu_organiser.Units.Pandal;
+
+import team.OG.pandu.Units.Pandal;
 
 public interface PandalManager {
 

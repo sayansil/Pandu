@@ -1,4 +1,4 @@
-package team.OG.pandu_organiser.Managers;
+package team.OG.pandu.Managers;
 
 public interface FeedbackManager {
 
@@ -8,3 +8,4 @@ public interface FeedbackManager {
 
     void analyzeFeedback();
 }
+

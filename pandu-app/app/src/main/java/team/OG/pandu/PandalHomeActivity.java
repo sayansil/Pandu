@@ -34,4 +34,5 @@ public class PandalHomeActivity extends AppCompatActivity {
         location.setText(getIntent().getStringExtra("location"));
         BaseUtility.loadImageFromURL(getApplicationContext(), getIntent().getStringExtra("picture"), picture);
     }
+
 }
