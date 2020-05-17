@@ -18,9 +18,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import hyogeun.github.com.colorratingbarlib.ColorRatingBar;
+import team.OG.pandu_organiser.Managers.FeedbackManager;
+import team.OG.pandu_organiser.Managers.PandalManager;
 import team.OG.pandu_organiser.Units.Feedback;
+import team.OG.pandu_organiser.Units.Pandal;
 
-public class AnalyzeActivity extends AppCompatActivity {
+public class AnalyzeActivity extends AppCompatActivity implements FeedbackManager, PandalManager {
 
     private static final String TAG = "AnalyzeActivity";
 
@@ -46,11 +49,56 @@ public class AnalyzeActivity extends AppCompatActivity {
 
         uid = getIntent().getStringExtra("uid");
 
-        fbList = new ArrayList<>();
+        fetchCurrentCrowdData(uid);
 
+        fbList = new ArrayList<>();
+        getFeedbackData(uid);
+    }
+
+    @Override
+    public void addFeedback(String text, double rating, String uid, String oid) {}
+
+    @Override
+    public void getRanking() {}
+
+    @Override
+    public void analyzeFeedback() {}
+
+    @Override
+    public void getFeedbackData(String oid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("pandels").document(uid)
+        db.collection("pandels/" + oid + "/reviews")
+            .get()
+            .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
+                if (task.isSuccessful()) {
+                    fbList = new ArrayList<>();
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        fbList.add(new Feedback(
+                                document.getString("text"),
+                                document.getDouble("rating"),
+                                document.getString("uid")
+                        ));
+                    }
+
+                    refresh_star();
+                    refresh_pos();
+
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            });
+    }
+
+    @Override
+    public void getRankingData() {}
+
+    @Override
+    public void fetchCurrentCrowdData(String oid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("pandels").document(oid)
                 .get()
                 .addOnCompleteListener((@NonNull Task<DocumentSnapshot> task) -> {
                     if (task.isSuccessful()) {
@@ -64,28 +112,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                     }
                 });
 
-        db.collection("pandels/" + uid + "/reviews")
-                .get()
-                .addOnCompleteListener((@NonNull Task<QuerySnapshot> task) -> {
-                    if (task.isSuccessful()) {
-                        fbList = new ArrayList<>();
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            fbList.add(new Feedback(
-                                    document.getString("text"),
-                                    document.getDouble("rating"),
-                                    document.getString("uid")
-                            ));
-                        }
-
-                        refresh_star();
-                        refresh_pos();
-
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.getException());
-                    }
-                });
     }
+
+    @Override
+    public void updateInformation(String oid, Pandal pandal) {}
+
+    @Override
+    public void getInformation(String oid) {}
 
     private void refresh_star() {
         double star_rating = 0;

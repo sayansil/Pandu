@@ -28,10 +28,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.joaquimley.faboptions.FabOptions;
 
+import team.OG.pandu_organiser.Managers.PandalManager;
 import team.OG.pandu_organiser.Units.Pandal;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements PandalManager {
 
     private static final String TAG = "HomeActivity";
     private static final String RUN_TAG = "LIVE TESTING";
@@ -99,8 +100,79 @@ public class HomeActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
 
+        getInformation(uid);
+    }
+
+    private void update_profile() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.dialog_update, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptsView);
+
+        final TextInputEditText inputName = promptsView.findViewById(R.id.textName);
+        final TextInputEditText inputTheme = promptsView.findViewById(R.id.textTheme);
+        final TextInputEditText inputLocation = promptsView.findViewById(R.id.textLocation);
+        final TextInputEditText inputPicture = promptsView.findViewById(R.id.textPicture);
+
+        inputName.setText(currentPandal.getName());
+        inputTheme.setText(currentPandal.getTheme());
+        inputLocation.setText(currentPandal.getLocation());
+        inputPicture.setText(currentPandal.getPicture());
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        (DialogInterface dialog, int d_id) -> {
+                            updateInformation(uid, new Pandal(
+                                    inputName.getText().toString(),
+                                    currentPandal.getPublicCount(),
+                                    inputLocation.getText().toString(),
+                                    inputTheme.getText().toString(),
+                                    inputPicture.getText().toString()
+                            ));
+                        })
+                .setNegativeButton("Cancel",
+                        (DialogInterface dialog,int d_id) -> {
+                            dialog.cancel();
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
+    }
+
+    @Override
+    public void getRankingData() {}
+
+    @Override
+    public void fetchCurrentCrowdData(String oid) {}
+
+    @Override
+    public void updateInformation(String oid, Pandal pandal) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("pandels").document(uid)
+        db.collection("pandels").document(oid)
+                .set(pandal)
+                .addOnSuccessListener((Void aVoid) -> {
+                    BaseUtility.writeLog(TAG, "Pandel Update Successful");
+                    Log.d(TAG, "Document added.");
+//                                        progressbar.setVisibility(View.GONE);
+
+                    refresh();
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    BaseUtility.writeLog(TAG, "Pandel Update Unsuccessful");
+                    Log.w(TAG, "Error adding document", e);
+//                                        progressbar.setVisibility(View.GONE);
+                });
+    }
+
+    @Override
+    public void getInformation(String oid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("pandels").document(oid)
                 .get()
                 .addOnCompleteListener((@NonNull Task<DocumentSnapshot> task) -> {
                     if (task.isSuccessful()) {
@@ -131,7 +203,7 @@ public class HomeActivity extends AppCompatActivity {
 
                             currentPandal = new Pandal();
 
-                            db.collection("pandels").document(uid)
+                            db.collection("pandels").document(oid)
                                     .set(currentPandal)
                                     .addOnSuccessListener((Void aVoid) -> {
                                         Log.d(TAG, "Document added.");
@@ -147,60 +219,5 @@ public class HomeActivity extends AppCompatActivity {
                         Log.e(TAG, "Error fetching document");
                     }
                 });
-    }
-
-    private void update_profile() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
-
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.dialog_update, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(promptsView);
-
-        final TextInputEditText inputName = promptsView.findViewById(R.id.textName);
-        final TextInputEditText inputTheme = promptsView.findViewById(R.id.textTheme);
-        final TextInputEditText inputLocation = promptsView.findViewById(R.id.textLocation);
-        final TextInputEditText inputPicture = promptsView.findViewById(R.id.textPicture);
-
-        inputName.setText(currentPandal.getName());
-        inputTheme.setText(currentPandal.getTheme());
-        inputLocation.setText(currentPandal.getLocation());
-        inputPicture.setText(currentPandal.getPicture());
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        (DialogInterface dialog, int d_id) -> {
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("pandels").document(uid)
-                                    .set(new Pandal(
-                                            inputName.getText().toString(),
-                                            currentPandal.getPublicCount(),
-                                            inputLocation.getText().toString(),
-                                            inputTheme.getText().toString(),
-                                            inputPicture.getText().toString()
-                                    ))
-                                    .addOnSuccessListener((Void aVoid) -> {
-                                        BaseUtility.writeLog(TAG, "Pandel Update Successful");
-                                        Log.d(TAG, "Document added.");
-//                                        progressbar.setVisibility(View.GONE);
-
-                                        refresh();
-                                    })
-                                    .addOnFailureListener((@NonNull Exception e) -> {
-                                        BaseUtility.writeLog(TAG, "Pandel Update Unsuccessful");
-                                        Log.w(TAG, "Error adding document", e);
-//                                        progressbar.setVisibility(View.GONE);
-                                    });
-                        })
-                .setNegativeButton("Cancel",
-                        (DialogInterface dialog,int d_id) -> {
-                            dialog.cancel();
-                        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
     }
 }

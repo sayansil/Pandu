@@ -24,12 +24,20 @@ public class InstrumentedUnitTests {
     private boolean[] ctrl;
     private int actual_db_size;
     private int test_publicCount;
+    private String test_name;
+    private String test_theme;
+    private String test_location;
+    private String test_picture;
 
     @Before
     public void init() {
         int n_test = 7;
         actual_db_size = 6;
         test_publicCount = 100;
+        test_name = "Test Pandal";
+        test_theme = "test456";
+        test_location = "";
+        test_picture = "https://201758-624029-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2017/03/img-placeholder.png";
         ctrl = new boolean[n_test];
     }
 
@@ -84,7 +92,7 @@ public class InstrumentedUnitTests {
     }
 
     @Test // # 4
-    public void accessPublicCount() {
+    public void accessPublicFields() {
         final int test_number = 4;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -96,6 +104,10 @@ public class InstrumentedUnitTests {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             assert(document.contains("publicCount"));
+                            assert(document.contains("theme"));
+                            assert(document.contains("location"));
+                            assert(document.contains("name"));
+                            assert(document.contains("picture"));
                         } else {
                             fail();
                         }
@@ -108,7 +120,7 @@ public class InstrumentedUnitTests {
     }
 
     @Test // # 5
-    public void getPublicCount() {
+    public void getPublicFields() {
         final int test_number = 5;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -120,6 +132,10 @@ public class InstrumentedUnitTests {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             assertEquals(test_publicCount, document.getLong("publicCount").intValue());
+                            assertEquals(test_theme, document.getString("theme"));
+                            assertEquals(test_name, document.getString("name"));
+                            assertEquals(test_location, document.getString("location"));
+                            assertEquals(test_picture, document.getString("picture"));
                         } else {
                             fail();
                         }
