@@ -115,7 +115,16 @@ public class ListActivity extends AppCompatActivity implements FeedbackManager, 
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
 
-                                    send_feedback(qrid, document.getString("name"));
+                                    Pandal newPandal = new Pandal(
+                                            document.getString("name"),
+                                            document.getLong("publicCount").intValue(),
+                                            document.getString("location"),
+                                            document.getString("theme"),
+                                            document.getString("picture")
+                                    );
+
+                                    increase_count(qrid, newPandal);
+                                    send_feedback(qrid, newPandal.getName());
                                 } else {
                                     Log.w(TAG, "Error fetching document");
 //                                    progressbar.setVisibility(View.GONE);
@@ -178,6 +187,19 @@ public class ListActivity extends AppCompatActivity implements FeedbackManager, 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
         alertDialog.show();
+    }
+
+    private void increase_count(String qrid, Pandal pandal) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        pandal.setPublicCount(pandal.getPublicCount() + 1);
+        db.collection("pandels").document(qrid)
+                .set(pandal)
+                .addOnSuccessListener((Void aVoid) -> {
+                    Log.d(TAG, "Document added.");
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.w(TAG, "Error adding document", e);
+                });
     }
 
     @Override
