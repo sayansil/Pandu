@@ -3,7 +3,9 @@ package team.OG.pandu_organiser;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -26,7 +29,14 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CrashlyticsCore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.BarcodeFormat;
 import com.joaquimley.faboptions.FabOptions;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import team.OG.pandu_organiser.Managers.PandalManager;
 import team.OG.pandu_organiser.Units.Pandal;
@@ -75,6 +85,9 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                 case R.id.faboptions_edit:
                     update_profile();
                     break;
+                case R.id.faboptions_help:
+                    BaseUtility.show_popup(R.layout.dialog_help, this);
+                    break;
                 case R.id.faboptions_logout:
                     FirebaseAuth.getInstance().signOut();
                     Intent logout_intent = new Intent(HomeActivity.this, SplashActivity.class);
@@ -84,6 +97,28 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                 case R.id.faboptions_info:
                     Intent info_intent = new Intent(HomeActivity.this, InfoActivity.class);
                     startActivity(info_intent);
+                    break;
+                case R.id.faboptions_qr:
+                    try {
+                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                        Bitmap bitmap = barcodeEncoder.encodeBitmap("pandu-" + uid, BarcodeFormat.QR_CODE, 400, 400);
+                        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pandu";
+                        File dir = new File(file_path);
+                        if(!dir.exists())
+                            dir.mkdirs();
+                        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(new Date());
+                        File file = new File(dir, "QR_" + timeStamp + ".png");
+                        FileOutputStream fOut = new FileOutputStream(file);
+
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+                        fOut.flush();
+                        fOut.close();
+
+                        Toast.makeText(getApplicationContext(), "New QR saved at " + file_path, Toast.LENGTH_SHORT).show();
+                    } catch(Exception e) {
+                        Log.e(TAG, e.getMessage());
+                        Toast.makeText(getApplicationContext(), "Could not save the QR.", Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         });

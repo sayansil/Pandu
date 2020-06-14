@@ -14,6 +14,17 @@
         android:id="@+id/faboptions_info"
         android:icon="@drawable/ic_info"
         android:title="Info" />
+
+    <item
+        android:id="@+id/faboptions_help"
+        android:icon="@drawable/ic_help"
+        android:title="Help" />
+
+    <item
+        android:id="@+id/faboptions_qr"
+        android:icon="@drawable/ic_scan"
+        android:title="QR" />
+
     <item
         android:id="@+id/faboptions_logout"
         android:icon="@drawable/ic_logout"
