@@ -8,7 +8,7 @@
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Shop"
+        android:text="Purchased"
         android:textStyle="bold"
         android:textSize="48sp"
         android:layout_margin="16dp"
@@ -16,24 +16,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/purchasesBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Purchases"
-        android:padding="8dp"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:layout_margin="16dp"
-        android:background="@color/colorAccent2"
-        android:textColor="#fff"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textView"
-        app:layout_constraintBottom_toBottomOf="@id/textView"/>
-
-
     <ListView
-        android:id="@+id/shopListView"
+        android:id="@+id/purchasedListView"
         android:layout_marginTop="32dp"
         android:layout_width="0dp"
         android:layout_height="0dp"

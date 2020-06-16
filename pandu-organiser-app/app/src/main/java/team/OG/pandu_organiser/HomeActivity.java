@@ -52,6 +52,8 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
     TextView theme;
     TextView location;
     FabOptions bottomMenu;
+    TextView food;
+    TextView pass;
 
     Pandal currentPandal;
 
@@ -67,6 +69,8 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
         name = findViewById(R.id.pandalHeaderName);
         theme = findViewById(R.id.pandalHeaderTheme);
         location = findViewById(R.id.pandalHeaderLocation);
+        food = findViewById(R.id.pandalHeaderFood);
+        pass = findViewById(R.id.pandalHeaderPass);
 
         bottomMenu = findViewById(R.id.optionsHome);
 
@@ -151,11 +155,15 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
         final TextInputEditText inputTheme = promptsView.findViewById(R.id.textTheme);
         final TextInputEditText inputLocation = promptsView.findViewById(R.id.textLocation);
         final TextInputEditText inputPicture = promptsView.findViewById(R.id.textPicture);
+        final TextInputEditText inputFood = promptsView.findViewById(R.id.textFood);
+        final TextInputEditText inputPass = promptsView.findViewById(R.id.textPass);
 
         inputName.setText(currentPandal.getName());
         inputTheme.setText(currentPandal.getTheme());
         inputLocation.setText(currentPandal.getLocation());
         inputPicture.setText(currentPandal.getPicture());
+        inputFood.setText(String.valueOf(currentPandal.getFood()));
+        inputPass.setText(String.valueOf(currentPandal.getPass()));
 
         alertDialogBuilder
                 .setCancelable(false)
@@ -166,7 +174,9 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                                     currentPandal.getPublicCount(),
                                     inputLocation.getText().toString(),
                                     inputTheme.getText().toString(),
-                                    inputPicture.getText().toString()
+                                    inputPicture.getText().toString(),
+                                    Integer.parseInt(inputFood.getText().toString()),
+                                    Integer.parseInt(inputPass.getText().toString())
                             ));
                         })
                 .setNegativeButton("Cancel",
@@ -218,6 +228,8 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                             name.setText(document.getString("name"));
                             theme.setText(document.getString("theme"));
                             location.setText(document.getString("location"));
+                            food.setText(String.valueOf(document.getLong("food")));
+                            pass.setText(String.valueOf(document.getLong("pass")));
                             BaseUtility.loadImageFromURL(this, document.getString("picture"), picture);
 
                             currentPandal = new Pandal(
@@ -225,7 +237,9 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                                     document.getLong("publicCount").intValue(),
                                     document.getString("location"),
                                     document.getString("theme"),
-                                    document.getString("picture")
+                                    document.getString("picture"),
+                                    document.getLong("food").intValue(),
+                                    document.getLong("pass").intValue()
                             );
 
                         } else {
@@ -234,6 +248,8 @@ public class HomeActivity extends AppCompatActivity implements PandalManager {
                             name.setText("[ Empty ]");
                             theme.setText("[ Empty ]");
                             location.setText("[ Empty ]");
+                            food.setText("0");
+                            pass.setText("0");
                             BaseUtility.loadImageFromURL(this, "https://semantic-ui.com/images/wireframe/image.png", picture);
 
                             currentPandal = new Pandal();

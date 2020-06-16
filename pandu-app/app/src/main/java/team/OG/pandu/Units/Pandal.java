@@ -6,13 +6,17 @@ public class Pandal implements Comparable<Pandal> {
     String location;
     String theme;
     String picture;
+    int pass;
+    int food;
 
-    public Pandal(String name, int publicCount, String location, String theme, String picture) {
+    public Pandal(String name, int publicCount, String location, String theme, String picture, int food, int pass) {
         this.name = name;
         this.publicCount = publicCount;
         this.location = location;
         this.theme = theme;
         this.picture = picture;
+        this.food = food;
+        this.pass = pass;
     }
 
     public String getName() {
@@ -53,6 +57,22 @@ public class Pandal implements Comparable<Pandal> {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public int getPass() {
+        return pass;
+    }
+
+    public void setPass(int pass) {
+        this.pass = pass;
+    }
+
+    public int getFood() {
+        return food;
+    }
+
+    public void setFood(int food) {
+        this.food = food;
     }
 
     @Override

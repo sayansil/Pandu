@@ -28,6 +28,7 @@
         <activity android:name=".PandalHomeActivity"/>
         <activity android:name=".RankingActivity" />
         <activity android:name=".BuyActivity" />
+        <activity android:name=".PurchasedActivity" />
 
     </application>
 

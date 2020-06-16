@@ -66,6 +66,8 @@ public class PandalAdapter extends ArrayAdapter<Pandal> {
             intent.putExtra("theme", currentItem.getTheme());
             intent.putExtra("location", currentItem.getLocation());
             intent.putExtra("picture", currentItem.getPicture());
+            intent.putExtra("food", String.valueOf(currentItem.getFood()));
+            intent.putExtra("pass", String.valueOf(currentItem.getPass()));
             mContext.startActivity(intent);
         });
 

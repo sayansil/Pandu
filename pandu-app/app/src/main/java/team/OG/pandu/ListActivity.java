@@ -120,7 +120,9 @@ public class ListActivity extends AppCompatActivity implements FeedbackManager, 
                                             document.getLong("publicCount").intValue(),
                                             document.getString("location"),
                                             document.getString("theme"),
-                                            document.getString("picture")
+                                            document.getString("picture"),
+                                            document.getLong("food").intValue(),
+                                            document.getLong("pass").intValue()
                                     );
 
                                     increase_count(qrid, newPandal);
@@ -254,7 +256,9 @@ public class ListActivity extends AppCompatActivity implements FeedbackManager, 
                                     document.getLong("publicCount").intValue(),
                                     document.getString("location"),
                                     document.getString("theme"),
-                                    document.getString("picture")));
+                                    document.getString("picture"),
+                                    document.getLong("food").intValue(),
+                                    document.getLong("pass").intValue()));
                         }
 
                         PandalAdapter mAdapter = new PandalAdapter(this, pandalList);

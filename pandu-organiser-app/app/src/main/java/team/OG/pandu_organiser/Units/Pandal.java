@@ -7,13 +7,17 @@ public class Pandal implements Comparable<Pandal> {
     String location;
     String theme;
     String picture;
+    int pass;
+    int food;
 
-    public Pandal(String name, int publicCount, String location, String theme, String picture) {
+    public Pandal(String name, int publicCount, String location, String theme, String picture, int pass, int food) {
         this.name = name;
         this.publicCount = publicCount;
         this.location = location;
         this.theme = theme;
         this.picture = picture;
+        this.food = food;
+        this.pass = pass;
     }
 
     public Pandal() {
@@ -22,6 +26,8 @@ public class Pandal implements Comparable<Pandal> {
         this.location = "[ Empty ]";
         this.theme = "[ Empty ]";
         this.picture = "https://semantic-ui.com/images/wireframe/image.png";
+        this.food = 0;
+        this.pass = 0;
     }
 
     public String getName() {
@@ -62,6 +68,22 @@ public class Pandal implements Comparable<Pandal> {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public int getPass() {
+        return pass;
+    }
+
+    public void setPass(int pass) {
+        this.pass = pass;
+    }
+
+    public int getFood() {
+        return food;
+    }
+
+    public void setFood(int food) {
+        this.food = food;
     }
 
     @Override

@@ -59,7 +59,9 @@ public class RankingActivity extends AppCompatActivity implements PandalManager 
                                     document.getLong("publicCount").intValue(),
                                     document.getString("location"),
                                     document.getString("theme"),
-                                    document.getString("picture")));
+                                    document.getString("picture"),
+                                    document.getLong("food").intValue(),
+                                    document.getLong("pass").intValue()));
                         }
 
                         Collections.sort(pandalList);

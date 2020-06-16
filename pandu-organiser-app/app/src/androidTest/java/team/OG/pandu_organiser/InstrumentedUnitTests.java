@@ -97,7 +97,9 @@ public class InstrumentedUnitTests {
                         100,
                         "",
                         test_theme,
-                        "https://201758-624029-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2017/03/img-placeholder.png"
+                        "https://201758-624029-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2017/03/img-placeholder.png",
+                        0,
+                        0
                 ))
                 .addOnSuccessListener((Void aVoid) -> {
 
